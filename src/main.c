@@ -4,10 +4,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/sensor.h>
 #include <stdio.h>
+
+static const struct device *const apds_sensor = DEVICE_DT_GET_ONE(avago_apds9960);
 
 int main(void)
 {
-	printf("Hello %s\n", CONFIG_BOARD_TARGET);
-	return 0;
+    if (!device_is_ready(apds_sensor)) {
+		printf("sensor: device not ready.\n");
+		return 0;
+	}
+
+    printf("Ready\n");
+
+    return 0;
 }
