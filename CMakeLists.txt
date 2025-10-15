@@ -5,4 +5,5 @@ project(litterbox_tracker)
 
 set(SHIELD adafruit_apds9960)
 
-target_sources(app PRIVATE src/main.c)
+FILE(GLOB app_sources src/*.c)
+target_sources(app PRIVATE ${app_sources})
