@@ -17,7 +17,7 @@ bool litterbox_sensor_setup()
 	return device_is_ready(litterbox_apds_sensor);
 }
 
-litterbox_status_t get_current_status()
+litterbox_status_t litterbox_get_current_status()
 {
 	return LITTERBOX_ERROR;
 }
