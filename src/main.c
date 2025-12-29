@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 
 #include "litterbox.h"
@@ -15,11 +16,12 @@ int main(void)
 		return 0;
 	}
 
-    if (litterbox_get_current_status() == LITTERBOX_ERROR) {
-        printk("Error\n");
-    }
-
 	printk("Ready\n");
+
+    while (1) {
+        k_sleep(K_MSEC(1000));
+        litterbox_get_current_status();
+    }
 
 	return 0;
 }
