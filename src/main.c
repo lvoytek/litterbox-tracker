@@ -4,22 +4,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <stdio.h>
+#include <zephyr/sys/printk.h>
 
 #include "litterbox.h"
 
 int main(void)
 {
 	if (!litterbox_sensor_setup()) {
-		printf("sensor: device not ready.\n");
+		printk("sensor: device not ready.\n");
 		return 0;
 	}
 
     if (litterbox_get_current_status() == LITTERBOX_ERROR) {
-        printf("Error\n");
+        printk("Error\n");
     }
 
-	printf("Ready\n");
+	printk("Ready\n");
 
 	return 0;
 }
