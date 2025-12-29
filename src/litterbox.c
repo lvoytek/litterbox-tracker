@@ -50,7 +50,8 @@ litterbox_status_t litterbox_get_current_status(int red_threshold, int blue_thre
 	average_red_value /= num_readings;
 	average_blue_value /= num_readings;
 
-	printk("Avg Red: %d, Avg Blue: %d, Blue On Count: %d\n", average_red_value, average_blue_value, blue_on_count);
+	printk("Avg Red: %d, Avg Blue: %d, Blue On Count: %d\n", average_red_value,
+	       average_blue_value, blue_on_count);
 
 	if (average_red_value >= red_threshold) {
 		return LITTERBOX_ERROR;

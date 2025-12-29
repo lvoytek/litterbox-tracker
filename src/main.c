@@ -18,10 +18,10 @@ int main(void)
 
 	printk("Ready\n");
 
-    while (1) {
-        k_sleep(K_MSEC(1000));
-        printk("%d\n", litterbox_get_current_status(10, 10, 500));
-    }
+	while (1) {
+		k_sleep(K_MSEC(1000));
+		printk("%d\n", litterbox_get_current_status(10, 10, 500));
+	}
 
 	return 0;
 }
