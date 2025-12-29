@@ -18,19 +18,47 @@ bool litterbox_sensor_setup()
 	return device_is_ready(litterbox_apds_sensor);
 }
 
-litterbox_status_t litterbox_get_current_status()
+litterbox_status_t litterbox_get_current_status(int red_threshold, int blue_threshold,
+						int flash_pulse_ms)
 {
-    struct sensor_value red_value, blue_value;
+	const int num_readings = 6;
+	struct sensor_value red_value, blue_value;
 
-    if (sensor_sample_fetch(litterbox_apds_sensor) != 0) {
-		printk("Sensor data fetch failed\n");
-        return LITTERBOX_ERROR;
+	int average_red_value = 0;
+	int average_blue_value = 0;
+	int blue_on_count = 0;
+
+	for (int i = 0; i < num_readings; i++) {
+		if (sensor_sample_fetch(litterbox_apds_sensor) != 0) {
+			printk("Sensor data fetch failed\n");
+			return LITTERBOX_UNKNOWN;
+		}
+
+		sensor_channel_get(litterbox_apds_sensor, SENSOR_CHAN_RED, &red_value);
+		sensor_channel_get(litterbox_apds_sensor, SENSOR_CHAN_BLUE, &blue_value);
+
+		average_red_value += red_value.val1;
+		average_blue_value += blue_value.val1;
+
+		if (blue_value.val1 >= blue_threshold) {
+			blue_on_count++;
+		}
+
+		k_msleep(flash_pulse_ms);
 	}
 
-    sensor_channel_get(litterbox_apds_sensor, SENSOR_CHAN_RED, &red_value);
-    sensor_channel_get(litterbox_apds_sensor, SENSOR_CHAN_BLUE, &blue_value);
+	average_red_value /= num_readings;
+	average_blue_value /= num_readings;
 
-    printk("Red: %d, Blue: %d\n", red_value.val1, blue_value.val1);
+	printk("Avg Red: %d, Avg Blue: %d, Blue On Count: %d\n", average_red_value, average_blue_value, blue_on_count);
 
-    return LITTERBOX_ERROR;
+	if (average_red_value >= red_threshold) {
+		return LITTERBOX_ERROR;
+	} else if (blue_on_count > num_readings / 3 && blue_on_count < (num_readings * 2) / 3) {
+		return LITTERBOX_WAITING;
+	} else if (average_blue_value >= blue_threshold) {
+		return LITTERBOX_IDLE;
+	}
+
+	return LITTERBOX_OFF;
 }
